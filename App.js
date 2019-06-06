@@ -1,13 +1,7 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, { Component } from 'react';
-import { Platform, StyleSheet, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
+import PlaceForm from './src/components/PlaceForm/PlaceForm';
+import PlaceList from './src/components/PlaceList/PlaceList';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -18,20 +12,32 @@ const instructions = Platform.select({
 
 export default class App extends Component {
   state = {
-    placeName: ''
+    places: []
   };
 
-  placeNameChangeHandler = val => {
-    this.setState({ placeName: val });
+  placeSubmitHandler = placeName => {
+    this.setState(prevState => {
+      return {
+        places: prevState.places.concat(placeName)
+      };
+    });
+  };
+
+  placeDeletedHandler = index => {
+    this.setState(prevState => {
+      return {
+        places: prevState.places.filter((place, i) => i !== index)
+      };
+    });
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <TextInput
-          value={this.state.placeName}
-          onChangeText={this.placeNameChangeHandler}
-          style={{ width: 300, borderColor: 'black', borderWidth: 1 }}
+        <PlaceForm placeSubmitHandler={this.placeSubmitHandler} />
+        <PlaceList
+          places={this.state.places}
+          onItemDeleted={this.placeDeletedHandler}
         />
       </View>
     );
@@ -40,19 +46,16 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 30,
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF'
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5
+  placeText: {
+    color: 'black'
   }
 });
